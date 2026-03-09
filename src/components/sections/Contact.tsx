@@ -26,7 +26,7 @@ export default function Contact() {
 
     // REPLACE 'YOUR_FORMSPREE_ID' with your actual Formspree ID
     // Create one for free at https://formspree.io/
-    const FORMSPREE_ID = "YOUR_FORMSPREE_ID";
+    const FORMSPREE_ID = "xkoqozez";
 
     if (FORMSPREE_ID === "YOUR_FORMSPREE_ID") {
       setStatus("error");
