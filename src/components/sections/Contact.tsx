@@ -24,28 +24,38 @@ export default function Contact() {
     setStatus("loading");
     setErrorMessage("");
 
+    // REPLACE 'YOUR_FORMSPREE_ID' with your actual Formspree ID
+    // Create one for free at https://formspree.io/
+    const FORMSPREE_ID = "YOUR_FORMSPREE_ID";
+
+    if (FORMSPREE_ID === "YOUR_FORMSPREE_ID") {
+      setStatus("error");
+      setErrorMessage("Please configure your Formspree ID in Contact.tsx to enable the contact form.");
+      return;
+    }
+
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: "POST",
         headers: {
+          "Accept": "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
         setStatus("success");
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
+        const data = await response.json();
         setStatus("error");
-        setErrorMessage(data.error || "Failed to send message.");
+        setErrorMessage(data.error || "Failed to send message. Please try again later.");
       }
     } catch (error) {
       console.error("Submission error:", error);
       setStatus("error");
-      setErrorMessage("Something went wrong. Please try again later.");
+      setErrorMessage("Something went wrong. Please check your internet connection.");
     }
   };
 
@@ -83,7 +93,7 @@ export default function Contact() {
                 transition={{ delay: 0.2 }}
                 className="text-gray-500 text-lg mb-12"
               >
-                Have a project in mind or want to discuss AI engineering? 
+                Have a project in mind or want to discuss AI engineering?
                 I'm always open to collaborating on innovative intelligent systems.
               </motion.p>
 
