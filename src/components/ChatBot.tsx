@@ -37,15 +37,20 @@ export default function ChatBot() {
         setIsLoading(true);
 
         try {
+            // The `messages` state variable now includes the current user message.
+            // To get the history *before* the current user message, we need to slice it.
+            // We also exclude the initial greeting message (index 0).
+            const historyForAPI = messages.slice(1).map(m => ({
+                role: m.role,
+                parts: [{ text: m.text }]
+            }));
+
             const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     message: userMessage,
-                    history: messages.slice(1).map(m => ({
-                        role: m.role,
-                        parts: [{ text: m.text }]
-                    }))
+                    history: historyForAPI
                 }),
             });
 
@@ -87,7 +92,7 @@ export default function ChatBot() {
                                     <h3 className="font-bold">AI Assistant</h3>
                                     <div className="flex items-center text-[10px] opacity-80">
                                         <span className="w-2 h-2 rounded-full bg-emerald-400 mr-1 animate-pulse" />
-                                        Online | Gemini 1.5 Flash
+                                        Online | Gemini 2.0 Flash
                                     </div>
                                 </div>
                             </div>

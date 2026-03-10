@@ -8,6 +8,10 @@ dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
+if (!process.env.GEMINI_API_KEY) {
+  console.warn("WARNING: GEMINI_API_KEY is not set in environment variables!");
+}
+
 const SYSTEM_CONTEXT = `
 You are safe and professional AI Assistant for Kaushik Chaturvedi. Your goal is to answer questions about his professional background, projects, and skills.
 Respond in a friendly, helpful, and concise manner. If you don't know the answer, politely suggest they contact Kaushik via the contact form or LinkedIn.
@@ -49,7 +53,7 @@ Projects (Total 23):
 `;
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
+  model: "gemini-2.0-flash",
   systemInstruction: SYSTEM_CONTEXT
 });
 
