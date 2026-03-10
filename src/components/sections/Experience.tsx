@@ -31,7 +31,7 @@ const experiences = [
   {
     company: "IBM AI and Data Analytics Program",
     role: "ai-ml intern",
-    period: "2024",
+    period: "April 2024 – September 2024",
     responsibilities: [
       "Worked on real world analytics projects",
       "Generated data driven insights for business cases",
@@ -73,9 +73,8 @@ export default function Experience() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
-                className={`relative flex flex-col md:flex-row items-center ${
-                  idx % 2 === 0 ? "md:flex-row-reverse" : ""
-                }`}
+                className={`relative flex flex-col md:flex-row items-center ${idx % 2 === 0 ? "md:flex-row-reverse" : ""
+                  }`}
               >
                 {/* Dot */}
                 <div className="absolute left-0 md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary border-4 border-white shadow-lg -translate-x-1/2 z-10 hidden md:block" />
