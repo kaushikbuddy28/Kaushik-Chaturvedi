@@ -92,7 +92,7 @@ export default function ChatBot() {
                                     <h3 className="font-bold">AI Assistant</h3>
                                     <div className="flex items-center text-[10px] opacity-80">
                                         <span className="w-2 h-2 rounded-full bg-emerald-400 mr-1 animate-pulse" />
-                                        Online | Gemini 2.0 Flash
+                                        Online | Gemini 2.5 Flash
                                     </div>
                                 </div>
                             </div>
