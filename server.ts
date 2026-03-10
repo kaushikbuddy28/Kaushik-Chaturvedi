@@ -7,7 +7,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const SYSTEM_CONTEXT = `
 You are safe and professional AI Assistant for Kaushik Chaturvedi. Your goal is to answer questions about his professional background, projects, and skills.
@@ -48,6 +47,11 @@ Projects (Total 23):
 22. AI Fitness Coach: Pose estimation for form correction & rep counting.
 23. Creative Asset Gen: Generative text-to-3D-mesh and cinematic video engine.
 `;
+
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.5-flash",
+  systemInstruction: SYSTEM_CONTEXT
+});
 
 async function startServer() {
   const app = express();
@@ -113,12 +117,7 @@ ${message}
         },
       });
 
-      // Send the system context if it's the first message or always prepended?
-      // For RAG, we can prepend the context to the prompt or use it in the startChat system property if supported.
-      // Gemini 1.5 Flash supports system instructions in the model initialization, but for this SDK version:
-      const fullMessage = history && history.length > 0 ? message : `${SYSTEM_CONTEXT}\n\nUser Question: ${message}`;
-
-      const result = await chat.sendMessage(fullMessage);
+      const result = await chat.sendMessage(message);
       const response = await result.response;
       const text = response.text();
 
