@@ -31,15 +31,15 @@ export default function About() {
             </h3>
             <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
               <p>
-                Kaushik Chaturvedi is an AI and Machine Learning Engineer specializing in the design and development of 
+                Kaushik Chaturvedi is an AI and Machine Learning Engineer specializing in the design and development of
                 intelligent systems powered by machine learning, generative AI, and computer vision.
               </p>
               <p>
-                He has experience building production-ready AI APIs, machine learning prediction systems, vector search 
+                He has experience building production-ready AI APIs, machine learning prediction systems, vector search
                 applications, and multimodal AI assistants.
               </p>
               <p>
-                His work focuses on combining machine learning models with real-world product systems using modern 
+                His work focuses on combining machine learning models with real-world product systems using modern
                 backend engineering practices.
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function About() {
                   <p className="text-sm text-gray-500 uppercase tracking-wider">Years Experience</p>
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-primary">15+</p>
+                  <p className="text-3xl font-bold text-primary">20+</p>
                   <p className="text-sm text-gray-500 uppercase tracking-wider">Projects Completed</p>
                 </div>
               </div>

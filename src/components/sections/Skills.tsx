@@ -6,32 +6,32 @@ const skillCategories = [
   {
     title: "Artificial Intelligence",
     icon: <Brain className="w-6 h-6" />,
-    skills: ["Machine Learning", "Deep Learning", "Computer Vision", "NLP", "Generative AI", "LLM Apps"],
+    skills: ["Machine Learning", "Deep Learning", "Computer Vision", "NLP", "Generative AI", "LLM Apps", "YOLOv8", "DeepSeek", "Stable Diffusion", "MediaPipe"],
   },
   {
     title: "Programming & Backend",
     icon: <Code2 className="w-6 h-6" />,
-    skills: ["Python", "API Development", "FastAPI", "Flask", "LangChain"],
+    skills: ["Python", "API Development", "FastAPI", "Flask", "LangChain", "Streamlit", "Node.js", "PyAutoGUI"],
   },
   {
     title: "ML Libraries",
     icon: <Cpu className="w-6 h-6" />,
-    skills: ["TensorFlow", "PyTorch", "Scikit-learn", "XGBoost", "Pandas", "NumPy"],
+    skills: ["TensorFlow", "PyTorch", "Scikit-learn", "XGBoost", "Pandas", "NumPy", "HuggingFace"],
   },
   {
     title: "Vector Search & Data",
     icon: <Search className="w-6 h-6" />,
-    skills: ["FAISS", "OpenAI Embeddings", "Vector Databases"],
+    skills: ["FAISS", "OpenAI Embeddings", "Vector Databases", "Pinecone", "Redis"],
   },
   {
     title: "Infrastructure",
     icon: <Network className="w-6 h-6" />,
-    skills: ["Docker", "REST APIs", "Microservices", "Kubernetes"],
+    skills: ["Docker", "AWS", "REST APIs", "n8n", "ONNX", "TensorRT", "Playwright", "Stripe"],
   },
   {
-    title: "Visualization",
+    title: "Visualization & 3D",
     icon: <LineChart className="w-6 h-6" />,
-    skills: ["Power BI", "Data Analysis", "Matplotlib", "Seaborn"],
+    skills: ["Power BI", "Matplotlib", "Seaborn", "Three.js", "Grafana"],
   },
 ];
 
