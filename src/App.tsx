@@ -12,6 +12,8 @@ import Contact from "./components/sections/Contact";
 import Footer from "./components/sections/Footer";
 import LoadingScreen from "./components/sections/LoadingScreen";
 
+import ChatBot from "./components/ChatBot";
+
 export default function App() {
   const [loading, setLoading] = useState(true);
 
@@ -58,6 +60,7 @@ export default function App() {
               <Contact />
             </main>
             <Footer />
+            <ChatBot />
           </div>
         )}
       </AnimatePresence>
