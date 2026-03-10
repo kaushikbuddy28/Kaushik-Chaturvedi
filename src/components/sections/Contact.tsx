@@ -133,7 +133,7 @@ export default function Contact() {
                 </motion.a>
 
                 <motion.a
-                  href="https://kaushikchaturvediportfolio.vercel.app/"
+                  href="https://kaushik-chaturvedi.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   initial={{ opacity: 0, x: -20 }}

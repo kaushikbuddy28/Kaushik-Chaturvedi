@@ -81,10 +81,22 @@ export default function Hero() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-4 pt-4">
-              <button className="px-8 py-4 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary-light transition-all flex items-center group">
+              <a
+                href="#projects"
+                className="px-8 py-4 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center group cursor-pointer"
+              >
                 View Projects
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </a>
+              <a
+                href="https://drive.google.com/drive/folders/1J-FaqJBct2beFXH_T9WgbzDaOPcffNIx?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 bg-white text-primary border-2 border-primary/20 rounded-xl font-semibold shadow-lg shadow-gray-100/50 hover:bg-primary/5 hover:border-primary transition-all flex items-center group"
+              >
+                Download Resume
+                <Download className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" />
+              </a>
             </div>
           </div>
         </motion.div>
