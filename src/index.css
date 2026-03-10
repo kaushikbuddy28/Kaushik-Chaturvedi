@@ -2,15 +2,33 @@
 @import "tailwindcss";
 
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-
+:root {
   --color-primary: #FF6A00;
   --color-primary-light: #FF8C42;
   --color-background: #FFFFFF;
   --color-foreground: #0F172A;
+  --font-main: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+.theme-matrix {
+  --color-primary: #00FF41; /* Pure Matrix Green */
+  --color-primary-light: #008F11;
+  --color-background: #0D0208; /* Deep Matrix Black */
+  --color-foreground: #D1FFD7;
+  --font-main: "JetBrains Mono", monospace;
+  
+  --matrix-glow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+@theme {
+  --font-sans: var(--font-main);
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-primary: var(--color-primary);
+  --color-primary-light: var(--color-primary-light);
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
   
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;

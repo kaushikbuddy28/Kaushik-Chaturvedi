@@ -11,6 +11,8 @@ import SystemsThinking from "./components/sections/SystemsThinking";
 import Contact from "./components/sections/Contact";
 import Footer from "./components/sections/Footer";
 import LoadingScreen from "./components/sections/LoadingScreen";
+import MatrixRain from "./components/MatrixRain";
+import { ThemeProvider } from "./context/ThemeContext";
 
 import ChatBot from "./components/ChatBot";
 
@@ -43,27 +45,30 @@ export default function App() {
   }, []);
 
   return (
-    <div className="relative">
-      <AnimatePresence mode="wait">
-        {loading ? (
-          <LoadingScreen key="loader" onComplete={() => setLoading(false)} />
-        ) : (
-          <div key="content" className="min-h-screen bg-white selection:bg-primary/20 selection:text-primary">
-            <Navbar />
-            <main>
-              <Hero />
-              <About />
-              <Skills />
-              <Projects />
-              <Experience />
-              <SystemsThinking />
-              <Contact />
-            </main>
-            <Footer />
-            <ChatBot />
-          </div>
-        )}
-      </AnimatePresence>
-    </div>
+    <ThemeProvider>
+      <div className="relative">
+        <MatrixRain />
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <LoadingScreen key="loader" onComplete={() => setLoading(false)} />
+          ) : (
+            <div key="content" className="min-h-screen bg-background selection:bg-primary/20 selection:text-primary transition-colors duration-500">
+              <Navbar />
+              <main>
+                <Hero />
+                <About />
+                <Skills />
+                <Projects />
+                <Experience />
+                <SystemsThinking />
+                <Contact />
+              </main>
+              <Footer />
+              <ChatBot />
+            </div>
+          )}
+        </AnimatePresence>
+      </div>
+    </ThemeProvider>
   );
 }

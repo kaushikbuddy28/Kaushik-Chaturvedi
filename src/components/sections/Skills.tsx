@@ -42,7 +42,7 @@ export default function Skills() {
   });
 
   return (
-    <section id="skills" className="py-24 bg-white">
+    <section id="skills" className="py-24 bg-background transition-colors duration-500">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <motion.h2
@@ -56,7 +56,7 @@ export default function Skills() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1 }}
-            className="text-4xl lg:text-5xl font-bold"
+            className="text-4xl lg:text-5xl font-bold text-foreground transition-colors"
           >
             The technical foundation of <span className="text-primary">intelligence</span>.
           </motion.h3>
@@ -70,17 +70,17 @@ export default function Skills() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: idx * 0.1 }}
               whileHover={{ y: -10 }}
-              className="group p-8 rounded-3xl bg-white border border-gray-100 shadow-xl shadow-gray-100/50 hover:shadow-primary/10 transition-all duration-300"
+              className="group p-8 rounded-3xl bg-background/40 backdrop-blur-xl border border-foreground/10 shadow-2xl shadow-primary/5 hover:shadow-primary/20 transition-all duration-300"
             >
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors shadow-[0_0_15px_rgba(var(--color-primary),0.3)]">
                 {category.icon}
               </div>
-              <h4 className="text-xl font-bold mb-6">{category.title}</h4>
+              <h4 className="text-xl font-bold mb-6 text-foreground transition-colors">{category.title}</h4>
               <div className="flex flex-wrap gap-2">
                 {category.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 text-sm font-medium border border-gray-100 group-hover:border-primary/20 transition-colors"
+                    className="px-3 py-1.5 rounded-lg bg-foreground/5 text-foreground/70 text-sm font-medium border border-foreground/5 group-hover:border-primary/30 transition-colors"
                   >
                     {skill}
                   </span>

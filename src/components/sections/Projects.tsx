@@ -354,7 +354,7 @@ function ProjectCard({ project, index, key }: { project: typeof projects[0]; ind
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className="group relative bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-xl shadow-gray-200/50 hover:border-primary/50 transition-all duration-300"
+      className="group relative bg-background/40 backdrop-blur-xl rounded-3xl border border-foreground/10 overflow-hidden shadow-2xl shadow-primary/5 hover:border-primary/50 transition-all duration-300"
     >
       <div className="p-8" style={{ transform: "translateZ(50px)" }}>
         <div className="flex justify-between items-start mb-4">
@@ -364,19 +364,19 @@ function ProjectCard({ project, index, key }: { project: typeof projects[0]; ind
             </h4>
             <p className="text-sm text-primary font-medium mt-1">{project.subtitle}</p>
           </div>
-          <Layers className="w-6 h-6 text-gray-300" />
+          <Layers className="w-6 h-6 text-foreground/20" />
         </div>
 
-        <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+        <p className="text-foreground/70 text-sm mb-6 leading-relaxed">
           {project.description}
         </p>
 
         <div className="space-y-3 mb-8">
-          <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Key Features</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-foreground/40">Key Features</p>
           <ul className="space-y-2">
             {project.features.map((feature, i) => (
-              <li key={i} className="text-xs text-gray-500 flex items-start">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2 mt-1 shrink-0" />
+              <li key={i} className="text-xs text-foreground/60 flex items-start">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2 mt-1 shrink-0 shadow-[0_0_5px_rgba(var(--color-primary),0.5)]" />
                 {feature}
               </li>
             ))}
@@ -385,7 +385,7 @@ function ProjectCard({ project, index, key }: { project: typeof projects[0]; ind
 
         <div className="flex flex-wrap gap-2">
           {project.tech.map((t) => (
-            <span key={t} className="px-2 py-1 bg-gray-50 text-[10px] font-bold uppercase tracking-tighter text-gray-500 rounded border border-gray-100 group-hover:border-primary/20">
+            <span key={t} className="px-2 py-1 bg-foreground/5 text-[10px] font-bold uppercase tracking-tighter text-foreground/50 rounded border border-foreground/5 group-hover:border-primary/20 transition-colors">
               {t}
             </span>
           ))}
@@ -402,7 +402,7 @@ export default function Projects() {
   });
 
   return (
-    <section id="projects" className="py-24 bg-gray-50/30">
+    <section id="projects" className="py-24 bg-background transition-colors duration-500">
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-8">
           <div className="max-w-2xl">
@@ -417,7 +417,7 @@ export default function Projects() {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: 0.1 }}
-              className="text-4xl lg:text-5xl font-bold"
+              className="text-4xl lg:text-5xl font-bold text-foreground transition-colors"
             >
               Engineering <span className="text-primary">Intelligent</span> Solutions.
             </motion.h3>
@@ -426,7 +426,7 @@ export default function Projects() {
             initial={{ opacity: 0, x: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.2 }}
-            className="text-gray-500 max-w-md"
+            className="text-foreground/50 max-w-md transition-colors"
           >
             A collection of production-ready AI systems, from predictive analytics to multimodal generative applications.
           </motion.p>
