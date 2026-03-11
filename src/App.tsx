@@ -12,6 +12,7 @@ import Contact from "./components/sections/Contact";
 import Footer from "./components/sections/Footer";
 import LoadingScreen from "./components/sections/LoadingScreen";
 import MatrixRain from "./components/MatrixRain";
+import AIGames from "./components/sections/AIGames";
 import { ThemeProvider } from "./context/ThemeContext";
 
 import ChatBot from "./components/ChatBot";
@@ -61,6 +62,7 @@ export default function App() {
                 <Projects />
                 <Experience />
                 <SystemsThinking />
+                <AIGames />
                 <Contact />
               </main>
               <Footer />
