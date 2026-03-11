@@ -30,7 +30,7 @@ const experiences = [
   },
   {
     company: "IBM AI and Data Analytics Program",
-    role: "ai-ml intern",
+    role: "AI-ML Intern",
     period: "April 2024 – September 2024",
     responsibilities: [
       "Worked on real world analytics projects",
