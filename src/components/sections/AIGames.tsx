@@ -3,16 +3,22 @@ import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import {
     Gamepad2,
-    UserSearch,
     RotateCcw,
-    CheckCircle2,
-    XSquare,
-    Sparkles,
-    HelpCircle
+    Table2,
+    Trophy,
+    User,
+    Cpu
 } from "lucide-react";
 
+// --- Constants ---
+const ROWS = 6;
+const COLS = 7;
+const EMPTY = null;
+const PLAYER = "RED";
+const AI = "YELLOW";
+
 // --- Smart Tic-Tac-Toe Logic (Minimax) ---
-const checkWinner = (board: (string | null)[]) => {
+const checkTttWinner = (board: (string | null)[]) => {
     const lines = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
         [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
@@ -27,8 +33,8 @@ const checkWinner = (board: (string | null)[]) => {
     return board.includes(null) ? null : "draw";
 };
 
-const minimax = (board: (string | null)[], depth: number, isMaximizing: boolean): number => {
-    const winner = checkWinner(board);
+const tttMinimax = (board: (string | null)[], depth: number, isMaximizing: boolean): number => {
+    const winner = checkTttWinner(board);
     if (winner === "O") return 10 - depth;
     if (winner === "X") return depth - 10;
     if (winner === "draw") return 0;
@@ -38,7 +44,7 @@ const minimax = (board: (string | null)[], depth: number, isMaximizing: boolean)
         for (let i = 0; i < 9; i++) {
             if (!board[i]) {
                 board[i] = "O";
-                const score = minimax(board, depth + 1, false);
+                const score = tttMinimax(board, depth + 1, false);
                 board[i] = null;
                 bestScore = Math.max(score, bestScore);
             }
@@ -49,7 +55,7 @@ const minimax = (board: (string | null)[], depth: number, isMaximizing: boolean)
         for (let i = 0; i < 9; i++) {
             if (!board[i]) {
                 board[i] = "X";
-                const score = minimax(board, depth + 1, true);
+                const score = tttMinimax(board, depth + 1, true);
                 board[i] = null;
                 bestScore = Math.min(score, bestScore);
             }
@@ -58,13 +64,13 @@ const minimax = (board: (string | null)[], depth: number, isMaximizing: boolean)
     }
 };
 
-const findBestMove = (board: (string | null)[]) => {
+const findTttBestMove = (board: (string | null)[]) => {
     let bestScore = -Infinity;
     let move = -1;
     for (let i = 0; i < 9; i++) {
         if (!board[i]) {
             board[i] = "O";
-            const score = minimax(board, 0, false);
+            const score = tttMinimax(board, 0, false);
             board[i] = null;
             if (score > bestScore) {
                 bestScore = score;
@@ -75,124 +81,263 @@ const findBestMove = (board: (string | null)[]) => {
     return move;
 };
 
-// --- Actor Guesser Data & Logic ---
-interface Actor {
-    name: string;
-    isMale: boolean;
-    isBollywood: boolean;
-    isSouth: boolean;
-    isVeteran: boolean; // Started before 2000
-    hasNationalAward: boolean;
-    isMegastar: boolean; // SRK, Salman, Rajini, etc.
-}
+// --- Connect Four Logic ---
+type Board = (string | null)[][];
 
-const actors: Actor[] = [
-    { name: "Shah Rukh Khan", isMale: true, isBollywood: true, isSouth: false, isVeteran: true, hasNationalAward: false, isMegastar: true },
-    { name: "Salman Khan", isMale: true, isBollywood: true, isSouth: false, isVeteran: true, hasNationalAward: false, isMegastar: true },
-    { name: "Amitabh Bachchan", isMale: true, isBollywood: true, isSouth: false, isVeteran: true, hasNationalAward: true, isMegastar: true },
-    { name: "Rajinikanth", isMale: true, isBollywood: false, isSouth: true, isVeteran: true, hasNationalAward: false, isMegastar: true },
-    { name: "Deepika Padukone", isMale: false, isBollywood: true, isSouth: false, isVeteran: false, hasNationalAward: false, isMegastar: true },
-    { name: "Alia Bhatt", isMale: false, isBollywood: true, isSouth: false, isVeteran: false, hasNationalAward: true, isMegastar: false },
-    { name: "Prabhas", isMale: true, isBollywood: false, isSouth: true, isVeteran: false, hasNationalAward: false, isMegastar: true },
-    { name: "Allu Arjun", isMale: true, isBollywood: false, isSouth: true, isVeteran: false, hasNationalAward: true, isMegastar: true },
-    { name: "Akshay Kumar", isMale: true, isBollywood: true, isSouth: false, isVeteran: true, hasNationalAward: true, isMegastar: true },
-    { name: "Ranbir Kapoor", isMale: true, isBollywood: true, isSouth: false, isVeteran: false, hasNationalAward: false, isMegastar: true },
-    { name: "Vijay Sethupathi", isMale: true, isBollywood: false, isSouth: true, isVeteran: false, hasNationalAward: true, isMegastar: false },
-    { name: "Sridevi", isMale: false, isBollywood: true, isSouth: true, isVeteran: true, hasNationalAward: true, isMegastar: true },
-    { name: "Kamal Haasan", isMale: true, isBollywood: true, isSouth: true, isVeteran: true, hasNationalAward: true, isMegastar: true },
-];
+const createBoard = (): Board => Array(ROWS).fill(null).map(() => Array(COLS).fill(EMPTY));
 
-const questions = [
-    { id: "isMale", text: "Is the person Male?" },
-    { id: "isBollywood", text: "Does the person primarily work in Bollywood?" },
-    { id: "isSouth", text: "Does the person primarily work in South Indian Cinema?" },
-    { id: "isVeteran", text: "Did their career start before the 2000s?" },
-    { id: "hasNationalAward", text: "Have they won a National Film Award?" },
-    { id: "isMegastar", text: "Are they considered a Global Megastar?" },
-];
+const checkC4Winner = (board: Board) => {
+    // Horizontal
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+            if (board[r][c] && board[r][c] === board[r][c + 1] && board[r][c] === board[r][c + 2] && board[r][c] === board[r][c + 3])
+                return board[r][c];
+        }
+    }
+    // Vertical
+    for (let r = 0; r < ROWS - 3; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (board[r][c] && board[r][c] === board[r + 1][c] && board[r][c] === board[r + 2][c] && board[r][c] === board[r + 3][c])
+                return board[r][c];
+        }
+    }
+    // Positive Diagonal
+    for (let r = 0; r < ROWS - 3; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+            if (board[r][c] && board[r][c] === board[r + 1][c + 1] && board[r][c] === board[r + 2][c + 2] && board[r][c] === board[r + 3][c + 3])
+                return board[r][c];
+        }
+    }
+    // Negative Diagonal
+    for (let r = 3; r < ROWS; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+            if (board[r][c] && board[r][c] === board[r - 1][c + 1] && board[r][c] === board[r - 2][c + 2] && board[r][c] === board[r - 3][c + 3])
+                return board[r][c];
+        }
+    }
+
+    if (board[0].every(cell => cell !== EMPTY)) return "draw";
+    return null;
+};
+
+const evaluateWindow = (window: (string | null)[], piece: string) => {
+    let score = 0;
+    const oppPiece = piece === PLAYER ? AI : PLAYER;
+
+    const count = window.filter(c => c === piece).length;
+    const empty = window.filter(c => c === EMPTY).length;
+    const oppCount = window.filter(c => c === oppPiece).length;
+
+    if (count === 4) score += 100;
+    else if (count === 3 && empty === 1) score += 5;
+    else if (count === 2 && empty === 2) score += 2;
+
+    if (oppCount === 3 && empty === 1) score -= 4;
+
+    return score;
+};
+
+const scorePosition = (board: Board, piece: string) => {
+    let score = 0;
+
+    // Center column preference
+    const centerArray = board.map(r => r[Math.floor(COLS / 2)]);
+    const centerCount = centerArray.filter(c => c === piece).length;
+    score += centerCount * 3;
+
+    // Horizontal
+    for (let r = 0; r < ROWS; r++) {
+        const rowArray = board[r];
+        for (let c = 0; c < COLS - 3; c++) {
+            score += evaluateWindow(rowArray.slice(c, c + 4), piece);
+        }
+    }
+
+    // Vertical
+    for (let c = 0; c < COLS; c++) {
+        const colArray = board.map(r => r[c]);
+        for (let r = 0; r < ROWS - 3; r++) {
+            score += evaluateWindow(colArray.slice(r, r + 4), piece);
+        }
+    }
+
+    // Positive Diagonal
+    for (let r = 0; r < ROWS - 3; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+            const window = [board[r][c], board[r + 1][c + 1], board[r + 2][c + 2], board[r + 3][c + 3]];
+            score += evaluateWindow(window, piece);
+        }
+    }
+
+    // Negative Diagonal
+    for (let r = 3; r < ROWS; r++) {
+        for (let c = 0; c < COLS - 3; c++) {
+            const window = [board[r][c], board[r - 1][c + 1], board[r - 2][c + 2], board[r - 3][c + 3]];
+            score += evaluateWindow(window, piece);
+        }
+    }
+
+    return score;
+};
+
+const getValidLocations = (board: Board) => {
+    const valid = [];
+    for (let c = 0; c < COLS; c++) {
+        if (board[0][c] === EMPTY) valid.push(c);
+    }
+    return valid;
+};
+
+const getNextOpenRow = (board: Board, col: number) => {
+    for (let r = ROWS - 1; r >= 0; r--) {
+        if (board[r][col] === EMPTY) return r;
+    }
+    return -1;
+};
+
+const c4Minimax = (board: Board, depth: number, alpha: number, beta: number, isMaximizing: boolean): [number | null, number] => {
+    const winner = checkC4Winner(board);
+    const isTerminal = winner !== null;
+    const validLocations = getValidLocations(board);
+
+    if (depth === 0 || isTerminal) {
+        if (isTerminal) {
+            if (winner === AI) return [null, 100000000000000];
+            if (winner === PLAYER) return [null, -100000000000000];
+            return [null, 0];
+        }
+        return [null, scorePosition(board, AI)];
+    }
+
+    if (isMaximizing) {
+        let value = -Infinity;
+        let column = validLocations[Math.floor(Math.random() * validLocations.length)];
+        for (let col of validLocations) {
+            const row = getNextOpenRow(board, col);
+            const bCopy = board.map(r => [...r]);
+            bCopy[row][col] = AI;
+            const newScore = c4Minimax(bCopy, depth - 1, alpha, beta, false)[1];
+            if (newScore > value) {
+                value = newScore;
+                column = col;
+            }
+            alpha = Math.max(alpha, value);
+            if (alpha >= beta) break;
+        }
+        return [column, value];
+    } else {
+        let value = Infinity;
+        let column = validLocations[Math.floor(Math.random() * validLocations.length)];
+        for (let col of validLocations) {
+            const row = getNextOpenRow(board, col);
+            const bCopy = board.map(r => [...r]);
+            bCopy[row][col] = PLAYER;
+            const newScore = c4Minimax(bCopy, depth - 1, alpha, beta, true)[1];
+            if (newScore < value) {
+                value = newScore;
+                column = col;
+            }
+            beta = Math.min(beta, value);
+            if (alpha >= beta) break;
+        }
+        return [column, value];
+    }
+};
 
 export default function AIGames() {
-    const [activeGame, setActiveGame] = useState<"ttt" | "actor">("ttt");
+    const [activeGame, setActiveGame] = useState<"ttt" | "c4">("ttt");
     const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
     // Tic-Tac-Toe States
     const [tttBoard, setTttBoard] = useState<(string | null)[]>(Array(9).fill(null));
     const [tttWinner, setTttWinner] = useState<string | null>(null);
-    const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+    const [isTttTurn, setIsTttTurn] = useState(true);
 
-    // Actor Guesser States
-    const [possibleActors, setPossibleActors] = useState<Actor[]>(actors);
-    const [currentQIndex, setCurrentQIndex] = useState(0);
-    const [guessedActor, setGuessedActor] = useState<Actor | null>(null);
-    const [gameStatus, setGameStatus] = useState<"playing" | "won" | "lost">("playing");
+    // Connect 4 States
+    const [c4Board, setC4Board] = useState<Board>(createBoard());
+    const [c4Winner, setC4Winner] = useState<string | null>(null);
+    const [isC4Turn, setIsC4Turn] = useState(true);
 
     // --- Tic-Tac-Toe Actions ---
     const handleTttClick = (index: number) => {
-        if (tttBoard[index] || tttWinner || !isPlayerTurn) return;
+        if (tttBoard[index] || tttWinner || !isTttTurn) return;
 
         const newBoard = [...tttBoard];
         newBoard[index] = "X";
         setTttBoard(newBoard);
 
-        const winner = checkWinner(newBoard);
+        const winner = checkTttWinner(newBoard);
         if (winner) {
             setTttWinner(winner);
         } else {
-            setIsPlayerTurn(false);
+            setIsTttTurn(false);
         }
     };
 
     useEffect(() => {
-        if (!isPlayerTurn && !tttWinner) {
+        if (activeGame === "ttt" && !isTttTurn && !tttWinner) {
             const timer = setTimeout(() => {
-                const bestMove = findBestMove(tttBoard);
+                const bestMove = findTttBestMove(tttBoard);
                 if (bestMove !== -1) {
                     const newBoard = [...tttBoard];
                     newBoard[bestMove] = "O";
                     setTttBoard(newBoard);
-                    const winner = checkWinner(newBoard);
+                    const winner = checkTttWinner(newBoard);
                     if (winner) setTttWinner(winner);
-                    setIsPlayerTurn(true);
+                    setIsTttTurn(true);
                 }
             }, 500);
             return () => clearTimeout(timer);
         }
-    }, [isPlayerTurn, tttBoard, tttWinner]);
+    }, [isTttTurn, tttBoard, tttWinner, activeGame]);
 
     const resetTtt = () => {
         setTttBoard(Array(9).fill(null));
         setTttWinner(null);
-        setIsPlayerTurn(true);
+        setIsTttTurn(true);
     };
 
-    // --- Actor Guesser Actions ---
-    const handleActorAnswer = (answer: boolean) => {
-        const currentQ = questions[currentQIndex];
-        const filtered = possibleActors.filter(actor => (actor as any)[currentQ.id] === answer);
+    // --- Connect 4 Actions ---
+    const handleC4Click = (col: number) => {
+        if (!isC4Turn || c4Winner || c4Board[0][col] !== EMPTY) return;
 
-        setPossibleActors(filtered);
+        const row = getNextOpenRow(c4Board, col);
+        if (row === -1) return;
 
-        if (filtered.length === 1) {
-            setGuessedActor(filtered[0]);
-            setGameStatus("won");
-        } else if (filtered.length === 0 || currentQIndex + 1 >= questions.length) {
-            if (filtered.length > 1) {
-                // If many left but out of questions, just pick one as a "guess"
-                setGuessedActor(filtered[Math.floor(Math.random() * filtered.length)]);
-                setGameStatus("won");
-            } else {
-                setGameStatus("lost");
-            }
+        const newBoard = c4Board.map(r => [...r]);
+        newBoard[row][col] = PLAYER;
+        setC4Board(newBoard);
+
+        const winner = checkC4Winner(newBoard);
+        if (winner) {
+            setC4Winner(winner);
         } else {
-            setCurrentQIndex(currentQIndex + 1);
+            setIsC4Turn(false);
         }
     };
 
-    const resetActor = () => {
-        setPossibleActors(actors);
-        setCurrentQIndex(0);
-        setGuessedActor(null);
-        setGameStatus("playing");
+    useEffect(() => {
+        if (activeGame === "c4" && !isC4Turn && !c4Winner) {
+            const timer = setTimeout(() => {
+                const [bestCol] = c4Minimax(c4Board, 4, -Infinity, Infinity, true);
+                if (bestCol !== null) {
+                    const row = getNextOpenRow(c4Board, bestCol);
+                    const newBoard = c4Board.map(r => [...r]);
+                    newBoard[row][bestCol] = AI;
+                    setC4Board(newBoard);
+                    const winner = checkC4Winner(newBoard);
+                    if (winner) setC4Winner(winner);
+                    setIsC4Turn(true);
+                }
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [isC4Turn, c4Board, c4Winner, activeGame]);
+
+    const resetC4 = () => {
+        setC4Board(createBoard());
+        setC4Winner(null);
+        setIsC4Turn(true);
     };
 
     return (
@@ -204,7 +349,7 @@ export default function AIGames() {
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         className="text-sm uppercase tracking-[0.2em] text-primary font-bold mb-4"
                     >
-                        Play & Learn
+                        Algorithmic Combat
                     </motion.h2>
                     <motion.h3
                         initial={{ opacity: 0, y: 20 }}
@@ -218,7 +363,7 @@ export default function AIGames() {
                     <div className="flex flex-wrap justify-center gap-4 mb-12">
                         {[
                             { id: "ttt", name: "Tic-Tac-Toe", icon: Gamepad2 },
-                            { id: "actor", name: "Actor Guesser", icon: UserSearch },
+                            { id: "c4", name: "Connect Four", icon: Table2 },
                         ].map((game) => (
                             <button
                                 key={game.id}
@@ -243,9 +388,9 @@ export default function AIGames() {
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-sm mx-auto"
                             >
-                                <div className="mb-6 text-center">
+                                <div className="mb-6">
                                     <h4 className="text-xl font-bold mb-2">Smart Tic-Tac-Toe</h4>
-                                    <p className="text-gray-500 text-sm">Can you beat the Minimax AI?</p>
+                                    <p className="text-gray-500 text-sm">3x3 Strategy vs Minimax AI</p>
                                 </div>
 
                                 <div className="grid grid-cols-3 gap-3 mb-8">
@@ -272,84 +417,81 @@ export default function AIGames() {
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="text-sm font-medium text-gray-500 text-center">
-                                        {isPlayerTurn ? "Your Turn (X)" : "AI is thinking..."}
+                                    <div className="text-sm font-medium text-gray-500">
+                                        {isTttTurn ? "Your Turn (X)" : "AI is thinking..."}
                                     </div>
                                 )}
                             </motion.div>
                         )}
 
-                        {activeGame === "actor" && (
+                        {activeGame === "c4" && (
                             <motion.div
-                                key="actor"
+                                key="c4"
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100 max-w-lg mx-auto"
+                                className="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 max-w-md mx-auto"
                             >
-                                <div className="mb-8 text-center">
-                                    <h4 className="text-2xl font-bold mb-2 flex items-center justify-center space-x-2">
-                                        <Sparkles className="text-yellow-500 w-6 h-6" />
-                                        <span>Actor Guesser</span>
-                                    </h4>
-                                    <p className="text-gray-500">Think of an Indian movie actor, and I will guess!</p>
-                                </div>
-
-                                {gameStatus === "playing" ? (
-                                    <div className="space-y-10">
-                                        <div className="min-h-[100px] flex items-center justify-center">
-                                            <motion.p
-                                                key={currentQIndex}
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                className="text-2xl font-semibold text-gray-800"
-                                            >
-                                                {questions[currentQIndex].text}
-                                            </motion.p>
+                                <div className="mb-6 flex justify-between items-center px-4">
+                                    <div className="text-left">
+                                        <h4 className="text-xl font-bold mb-1">Connect Four AI</h4>
+                                        <p className="text-gray-500 text-xs">Get four in a row to win!</p>
+                                    </div>
+                                    <div className="flex items-center space-x-4">
+                                        <div className="flex items-center space-x-1">
+                                            <div className="w-3 h-3 rounded-full bg-red-500" />
+                                            <span className="text-[10px] font-bold text-gray-400">YOU</span>
                                         </div>
-
-                                        <div className="flex justify-center gap-6">
-                                            <button
-                                                onClick={() => handleActorAnswer(true)}
-                                                className="px-10 py-4 bg-primary text-white rounded-2xl font-bold text-lg hover:scale-105 transition-all shadow-lg shadow-primary/20"
-                                            >
-                                                YES
-                                            </button>
-                                            <button
-                                                onClick={() => handleActorAnswer(false)}
-                                                className="px-10 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold text-lg hover:bg-gray-200 transition-all border border-gray-200"
-                                            >
-                                                NO
-                                            </button>
-                                        </div>
-
-                                        <div className="text-sm text-gray-400 font-medium">
-                                            Question {currentQIndex + 1} of {questions.length}
+                                        <div className="flex items-center space-x-1">
+                                            <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                                            <span className="text-[10px] font-bold text-gray-400">AI</span>
                                         </div>
                                     </div>
-                                ) : gameStatus === "won" ? (
+                                </div>
+
+                                <div className="bg-blue-600 p-3 rounded-2xl shadow-inner mb-6">
+                                    <div className="grid grid-cols-7 gap-2">
+                                        {c4Board.map((row, r) =>
+                                            row.map((cell, c) => (
+                                                <button
+                                                    key={`${r}-${c}`}
+                                                    onClick={() => handleC4Click(c)}
+                                                    className={`aspect-square rounded-full flex items-center justify-center transition-all ${cell === PLAYER ? "bg-red-500 shadow-lg" :
+                                                            cell === AI ? "bg-yellow-400 shadow-lg" :
+                                                                "bg-blue-800 shadow-inner"
+                                                        } ${!c4Winner && isC4Turn && r === 0 ? "hover:bg-blue-700 cursor-pointer" : "cursor-default"}`}
+                                                />
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+
+                                {c4Winner ? (
                                     <div className="flex flex-col items-center">
-                                        <div className="w-20 h-20 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6 animate-bounce">
-                                            <CheckCircle2 className="w-12 h-12" />
+                                        <div className="flex items-center space-x-2 mb-2">
+                                            <Trophy className={`w-6 h-6 ${c4Winner === PLAYER ? "text-red-500" : c4Winner === AI ? "text-yellow-500" : "text-gray-400"}`} />
+                                            <p className="text-xl font-bold">
+                                                {c4Winner === "draw" ? "It's a Draw!" : c4Winner === PLAYER ? "You Won!" : "AI Won!"}
+                                            </p>
                                         </div>
-                                        <p className="text-gray-500 mb-1">I am 99% sure you are thinking of...</p>
-                                        <p className="text-3xl font-black text-primary mb-10">{guessedActor?.name}</p>
-                                        <button onClick={resetActor} className="flex items-center space-x-2 text-primary font-bold hover:underline">
+                                        <button onClick={resetC4} className="flex items-center space-x-2 text-primary font-bold hover:underline py-2">
                                             <RotateCcw className="w-5 h-5" />
                                             <span>Play Again</span>
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center">
-                                        <div className="w-20 h-20 rounded-full bg-red-50 text-red-600 flex items-center justify-center mb-6">
-                                            <HelpCircle className="w-12 h-12" />
-                                        </div>
-                                        <p className="text-2xl font-bold mb-2">You beat me!</p>
-                                        <p className="text-gray-500 mb-10">I couldn't guess the actor. You win this round!</p>
-                                        <button onClick={resetActor} className="flex items-center space-x-2 text-primary font-bold hover:underline">
-                                            <RotateCcw className="w-5 h-5" />
-                                            <span>Play Again</span>
-                                        </button>
+                                    <div className="flex items-center justify-center space-x-3 py-2">
+                                        {isC4Turn ? (
+                                            <>
+                                                <User className="w-4 h-4 text-red-500" />
+                                                <span className="text-sm font-semibold text-gray-600">Your Turn (Red)</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Cpu className="w-4 h-4 text-yellow-500 animate-pulse" />
+                                                <span className="text-sm font-semibold text-gray-600">AI is thinking...</span>
+                                            </>
+                                        )}
                                     </div>
                                 )}
                             </motion.div>
