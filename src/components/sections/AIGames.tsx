@@ -369,8 +369,8 @@ export default function AIGames() {
                                 key={game.id}
                                 onClick={() => setActiveGame(game.id as any)}
                                 className={`flex items-center space-x-2 px-6 py-3 rounded-full transition-all ${activeGame === game.id
-                                        ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                        : "bg-white text-gray-600 hover:bg-white/80 border border-gray-100"
+                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                    : "bg-white text-gray-600 hover:bg-white/80 border border-gray-100"
                                     }`}
                             >
                                 <game.icon className="w-5 h-5" />
@@ -449,18 +449,36 @@ export default function AIGames() {
                                     </div>
                                 </div>
 
-                                <div className="bg-blue-600 p-3 rounded-2xl shadow-inner mb-6">
+                                <div className="bg-blue-600 p-3 rounded-2xl shadow-inner mb-6 relative overflow-hidden">
                                     <div className="grid grid-cols-7 gap-2">
                                         {c4Board.map((row, r) =>
                                             row.map((cell, c) => (
-                                                <button
+                                                <div
                                                     key={`${r}-${c}`}
-                                                    onClick={() => handleC4Click(c)}
-                                                    className={`aspect-square rounded-full flex items-center justify-center transition-all ${cell === PLAYER ? "bg-red-500 shadow-lg" :
-                                                            cell === AI ? "bg-yellow-400 shadow-lg" :
-                                                                "bg-blue-800 shadow-inner"
-                                                        } ${!c4Winner && isC4Turn && r === 0 ? "hover:bg-blue-700 cursor-pointer" : "cursor-default"}`}
-                                                />
+                                                    className="relative aspect-square rounded-full bg-blue-800 shadow-inner overflow-hidden"
+                                                >
+                                                    <button
+                                                        onClick={() => handleC4Click(c)}
+                                                        className={`absolute inset-0 w-full h-full rounded-full transition-colors z-20 ${!c4Winner && isC4Turn ? "hover:bg-white/5 cursor-pointer" : "cursor-default"
+                                                            }`}
+                                                    />
+                                                    <AnimatePresence>
+                                                        {cell && (
+                                                            <motion.div
+                                                                initial={{ y: -(r + 1) * 80 }}
+                                                                animate={{ y: 0 }}
+                                                                transition={{
+                                                                    type: "spring",
+                                                                    stiffness: 300,
+                                                                    damping: 20,
+                                                                    mass: 0.8
+                                                                }}
+                                                                className={`absolute inset-0 w-full h-full rounded-full shadow-lg z-10 ${cell === PLAYER ? "bg-red-500" : "bg-yellow-400"
+                                                                    }`}
+                                                            />
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
                                             ))
                                         )}
                                     </div>
